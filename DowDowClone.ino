@@ -128,6 +128,7 @@ void setup() {
 
   //Check if there is a switch for night mode
   #ifdef NIGHT_MODE_ENABLE_PIN
+    pinMode(NIGHT_MODE_ENABLE_PIN, INPUT);
     int max_brightness = PWM_MAX;
     if (digitalRead(NIGHT_MODE_ENABLE_PIN)) {
       max_brightness = max_brightness * (NIGHT_MODE_PC / 100.0);
