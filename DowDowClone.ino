@@ -10,8 +10,8 @@
  *  The commercial Dowdow device slows the breathing from 11 breaths
  *  per minute to 6 breaths per minute over a period of 8 minutes.
  *  
- *  This clone allows the starting frequency and the duration of
- *  the slow down to be set with two potentiometers.
+ *  This clone allows the initial breathing frequency, target breathing 
+ *  frequency and the duration of the slow down to be set with three potentiometers.
  *  
  *  Breathing is reduced over "DEFAULT_REDUCING_TIME_PC"% of the selected run time and the
  *  remaining time is constant at the target rate.
