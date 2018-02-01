@@ -1,5 +1,5 @@
 ## Dowdow Arduino Clone for sleep meditation. ##
-Based on https://github.com/gary909/Dodow-Clone
+Based on https://github.com/gary909/Dodow-Clone from https://www.instructables.com/id/DIY-Dodow-Clone-Arduino-Sleep-Meditation-Machine/
  
 The purpose of the Dowdow is to progessively slow breathing, the user breathes in as the light gets brighter and out as it dims.  Each breath gets slightly longer until the target respiration rate is acheived.
 
