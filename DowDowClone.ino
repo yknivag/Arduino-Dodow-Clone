@@ -103,8 +103,8 @@ void fadeLED(int pin, int duration_of_fade, int low_value, int high_value) {
 
 
 void realBreatheLED(int pin, int duration_of_fade, int low_value, int high_value) {
-  int period_time = duration_of_fade / 5;
-  int up_delay_time = period_time/ (high_value - low_value);
+  int period_time = duration_of_fade / 6;
+  int up_delay_time = (period_time * 2)/ (high_value - low_value);
   int down_delay_time = (period_time * 2)/ (high_value - low_value);
   for (int i=(low_value - 1); i<high_value; i++) {
     analogWrite(pin, i);
