@@ -49,8 +49,10 @@
 
  //Include Libraries
 
- #include <avr/sleep.h>
- 
+#if defined(__AVR__)
+  #include <avr/sleep.h>
+#endif
+  
 //Set up options
 
 #define DEFAULT_INITIAL_FREQUENCY 11  //breaths per minute to start from
@@ -64,7 +66,12 @@
 #define DURATION_PIN 16               //Analog input pin for setting of duration. [16 = A2]
 #define NIGHT_MODE_ENABLE_PIN 2       //Digital pin for setting whether to run period of extra steady time at the end.
 
-#define PWM_MAX 255                   //Change to 1023 for ESP8266 boards.
+#if defined(__AVR__)
+  #define PWM_MAX 255                 //Arduino has 8-bit PWM
+#elif defined(ESP8266)
+  #define PWM_MAX 1023                //ESP8266 has 10-bit PWM
+#endif
+
 #define GAP_BRIGHTNESS_PC 10          //Percentage of PWN_RANGE value for dimmest setting (gap between breaths)
 #define NIGHT_MODE_PC 50              //Percentage by which to lower brightness if night mode switch enabled.
 #define INPUT_MAX 1023                //Range of analogue inputs.
@@ -92,6 +99,22 @@ void fadeLED(int pin, int duration_of_fade, int low_value, int high_value) {
     delay(delay_time);
   }
   delay(period_time);
+}
+
+
+void realBreatheLED(int pin, int duration_of_fade, int low_value, int high_value) {
+  int period_time = duration_of_fade / 5;
+  int up_delay_time = period_time/ (high_value - low_value);
+  int down_delay_time = (period_time * 2)/ (high_value - low_value);
+  for (int i=(low_value - 1); i<high_value; i++) {
+    analogWrite(pin, i);
+    delay(up)delay_time);
+  }
+  for (int j=(high_value - 1); j>low_value; j--) {
+    analogWrite(pin, j);
+    delay(down_delay_time);
+  }
+  delay(period_time * 2);
 }
 
 void setup() {
@@ -245,7 +268,7 @@ void setup() {
       Serial.println("ms.");
       total_duration = total_duration + this_duration;
     #endif
-   fadeLED(LED_PIN, this_duration, min_brightness, max_brightness);
+   realBreatheLED(LED_PIN, this_duration, min_brightness, max_brightness);
    this_duration = this_duration + change_in_duration_ms;
   }
 
@@ -267,7 +290,7 @@ void setup() {
   //Run the extra piece of stable rate breathing at the end...
   float steady_time_run = 0;
   while (steady_time_run<steady_duration) {
-    fadeLED(LED_PIN, target_duration_ms, min_brightness, max_brightness);
+    realBreatheLED(LED_PIN, target_duration_ms, min_brightness, max_brightness);
     steady_time_run = steady_time_run + (target_duration_ms / 1000);
   }
 
@@ -293,9 +316,13 @@ void setup() {
   digitalWrite(LED_PIN, LOW);
 
   //Go to sleep
-  set_sleep_mode (SLEEP_MODE_PWR_DOWN); 
-  sleep_enable();
-  sleep_cpu ();  
+  #if defined(__AVR__)
+    set_sleep_mode (SLEEP_MODE_PWR_DOWN); 
+    sleep_enable();
+    sleep_cpu ();  
+  #elif defined(ESP8266)
+    ESP.deepSleep(0);
+  #endif
 }
 
 void loop() {
